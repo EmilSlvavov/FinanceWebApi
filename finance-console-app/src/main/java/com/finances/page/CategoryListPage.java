@@ -1,0 +1,81 @@
+package com.finances.page;
+
+import com.finances.service.ExpenseCategoryService;
+import com.finances.dto.response.ExpenseCategoryResponse;
+import com.finances.dto.response.PagedResponse;
+import com.finances.util.ConsoleUI;
+import java.util.List;
+
+public class CategoryListPage {
+    private static final int PAGE_SIZE = 5;
+
+    public static void show(ExpenseCategoryService categoryService) {
+        int currentPage = 0;
+
+        while (true) {
+            ConsoleUI.clearScreen();
+            ConsoleUI.printHeader("EXPENSE CATEGORIES");
+
+            PagedResponse<ExpenseCategoryResponse> response = categoryService.getAllCategories(currentPage, PAGE_SIZE);
+            
+            if (response == null || response.getContent() == null || response.getContent().isEmpty()) {
+                ConsoleUI.printInfo("No expense categories found.");
+                System.out.println("\nPress Enter to go back...");
+                ConsoleUI.readInput("");
+                return;
+            }
+
+            List<ExpenseCategoryResponse> categories = response.getContent();
+            
+            System.out.println("\n" + String.format("%-4s %-25s %-12s %-10s %-10s", 
+                    "ID", "Type", "Budget", "Spent", "Spent %"));
+            ConsoleUI.printLine();
+
+            for (ExpenseCategoryResponse category : categories) {
+                System.out.println(String.format("%-4d %-25s %-12.2f %-10.2f %-10.1f%%", 
+                        category.getId(), 
+                        truncate(category.getExpenseType(), 25),
+                        category.getCategoryBudget(),
+                        category.getTotalSpent() != null ? category.getTotalSpent() : 0,
+                        category.getSpentPercent() != null ? category.getSpentPercent() : 0));
+            }
+
+            ConsoleUI.printLine();
+            System.out.println("\nPage " + (currentPage + 1) + " of " + response.getTotalPages());
+            System.out.println("Total categories: " + response.getTotalElements());
+
+            System.out.println("\n1. Next Page");
+            System.out.println("2. Previous Page");
+            System.out.println("3. Back to Menu");
+            String choice = ConsoleUI.readInput("\nSelect option: ");
+
+            switch (choice) {
+                case "1":
+                    if (currentPage < response.getTotalPages() - 1) {
+                        currentPage++;
+                    } else {
+                        ConsoleUI.printInfo("You are on the last page.");
+                        ConsoleUI.pause();
+                    }
+                    break;
+                case "2":
+                    if (currentPage > 0) {
+                        currentPage--;
+                    } else {
+                        ConsoleUI.printInfo("You are on the first page.");
+                        ConsoleUI.pause();
+                    }
+                    break;
+                case "3":
+                    return;
+                default:
+                    ConsoleUI.printError("Invalid option.");
+                    ConsoleUI.pause();
+            }
+        }
+    }
+
+    private static String truncate(String str, int length) {
+        return str.length() > length ? str.substring(0, length - 3) + "..." : str;
+    }
+}
