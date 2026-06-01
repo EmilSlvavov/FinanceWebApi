@@ -42,8 +42,11 @@ public class ExpenseListPage {
             }
 
             ConsoleUI.printLine();
-            System.out.println("\nPage " + (currentPage + 1) + " of " + response.getTotalPages());
-            System.out.println("Total expenses: " + response.getTotalElements());
+            int totalPages = response.getTotalPages() != null ? response.getTotalPages() : 1;
+            long totalElements = response.getTotalElements() != null ? response.getTotalElements() : 0;
+            
+            System.out.println("\nPage " + (currentPage + 1) + " of " + totalPages);
+            System.out.println("Total expenses: " + totalElements);
 
             System.out.println("\n1. Next Page");
             System.out.println("2. Previous Page");
@@ -52,7 +55,7 @@ public class ExpenseListPage {
 
             switch (choice) {
                 case "1":
-                    if (currentPage < response.getTotalPages() - 1) {
+                    if (currentPage < totalPages - 1) {
                         currentPage++;
                     } else {
                         ConsoleUI.printInfo("You are on the last page.");
