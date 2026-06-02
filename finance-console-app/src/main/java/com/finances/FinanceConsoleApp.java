@@ -66,7 +66,12 @@ public class FinanceConsoleApp {
             ConsoleUI.clearScreen();
             ConsoleUI.printHeader("FINANCE MANAGER - DASHBOARD");
             
-            System.out.println("\n1. Budgets");
+            String currentUser = authService.getCurrentUsername();
+            if (currentUser != null) {
+                System.out.println("Welcome, " + currentUser + "!\n");
+            }
+            
+            System.out.println("1. Budgets");
             System.out.println("2. Expenses");
             System.out.println("3. Expense Categories");
             System.out.println("4. Profile");
@@ -86,13 +91,14 @@ public class FinanceConsoleApp {
                     showCategoryMenu(categoryService);
                     break;
                 case "4":
-                    ProfilePage.show();
+                    showProfileMenu(userService);
                     break;
                 case "5":
                     showAdminMenu(userService);
                     break;
                 case "6":
                     authService.logout();
+                    SessionManager.clearSession();
                     break;
                 default:
                     ConsoleUI.printError("Invalid option.");
@@ -110,7 +116,8 @@ public class FinanceConsoleApp {
             
             System.out.println("\n1. View All Budgets");
             System.out.println("2. Create New Budget");
-            System.out.println("3. Back to Main Menu");
+            System.out.println("3. View Budget Reports");
+            System.out.println("4. Back to Main Menu");
             
             String choice = ConsoleUI.readInput("\nSelect an option: ");
 
@@ -122,6 +129,9 @@ public class FinanceConsoleApp {
                     CreateBudgetPage.show(budgetService);
                     break;
                 case "3":
+                    BudgetReportPage.show(budgetService);
+                    break;
+                case "4":
                     return;
                 default:
                     ConsoleUI.printError("Invalid option.");
@@ -137,7 +147,8 @@ public class FinanceConsoleApp {
             
             System.out.println("\n1. View All Expenses");
             System.out.println("2. Create New Expense");
-            System.out.println("3. Back to Main Menu");
+            System.out.println("3. Search & Filter Expenses");
+            System.out.println("4. Back to Main Menu");
             
             String choice = ConsoleUI.readInput("\nSelect an option: ");
 
@@ -149,6 +160,9 @@ public class FinanceConsoleApp {
                     CreateExpensePage.show(expenseService, categoryService);
                     break;
                 case "3":
+                    ExpenseSearchPage.show(expenseService);
+                    break;
+                case "4":
                     return;
                 default:
                     ConsoleUI.printError("Invalid option.");
@@ -184,21 +198,59 @@ public class FinanceConsoleApp {
         }
     }
 
-    private static void showAdminMenu(UserService userService) {
+    private static void showProfileMenu(UserService userService) {
         while (true) {
             ConsoleUI.clearScreen();
-            ConsoleUI.printHeader("ADMIN PANEL");
+            ConsoleUI.printHeader("USER PROFILE");
             
-            System.out.println("\n1. Create New User");
-            System.out.println("2. Back to Main Menu");
+            System.out.println("\n1. View Profile");
+            System.out.println("2. Change Password");
+            System.out.println("3. Back to Main Menu");
             
             String choice = ConsoleUI.readInput("\nSelect an option: ");
 
             switch (choice) {
                 case "1":
-                    CreateUserPage.show(userService);
+                    ProfilePage.show();
                     break;
                 case "2":
+                    String userIdStr = ConsoleUI.readInput("Enter your user ID: ");
+                    try {
+                        Integer userId = Integer.parseInt(userIdStr);
+                        ChangePasswordPage.show(userService, userId);
+                    } catch (NumberFormatException e) {
+                        ConsoleUI.printError("Invalid ID format.");
+                        ConsoleUI.pause();
+                    }
+                    break;
+                case "3":
+                    return;
+                default:
+                    ConsoleUI.printError("Invalid option.");
+                    ConsoleUI.pause();
+            }
+        }
+    }
+
+    private static void showAdminMenu(UserService userService) {
+        while (true) {
+            ConsoleUI.clearScreen();
+            ConsoleUI.printHeader("ADMIN PANEL");
+            
+            System.out.println("\n1. User Management");
+            System.out.println("2. Create New User");
+            System.out.println("3. Back to Main Menu");
+            
+            String choice = ConsoleUI.readInput("\nSelect an option: ");
+
+            switch (choice) {
+                case "1":
+                    UserManagementPage.show(userService);
+                    break;
+                case "2":
+                    CreateUserPage.show(userService);
+                    break;
+                case "3":
                     return;
                 default:
                     ConsoleUI.printError("Invalid option.");

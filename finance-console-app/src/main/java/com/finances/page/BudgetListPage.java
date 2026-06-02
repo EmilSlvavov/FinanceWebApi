@@ -51,7 +51,9 @@ public class BudgetListPage {
 
             System.out.println("\n1. Next Page");
             System.out.println("2. Previous Page");
-            System.out.println("3. Back to Menu");
+            System.out.println("3. Edit Budget");
+            System.out.println("4. Delete Budget");
+            System.out.println("5. Back to Menu");
             String choice = ConsoleUI.readInput("\nSelect option: ");
 
             switch (choice) {
@@ -72,6 +74,31 @@ public class BudgetListPage {
                     }
                     break;
                 case "3":
+                    String budgetIdStr = ConsoleUI.readInput("Enter budget ID to edit: ");
+                    try {
+                        Integer budgetId = Integer.parseInt(budgetIdStr);
+                        EditBudgetPage.show(budgetService, budgetId);
+                    } catch (NumberFormatException e) {
+                        ConsoleUI.printError("Invalid ID format.");
+                        ConsoleUI.pause();
+                    }
+                    break;
+                case "4":
+                    String deleteIdStr = ConsoleUI.readInput("Enter budget ID to delete: ");
+                    try {
+                        Integer budgetId = Integer.parseInt(deleteIdStr);
+                        if (budgetService.deleteBudget(budgetId)) {
+                            ConsoleUI.printSuccess("Budget deleted successfully!");
+                        } else {
+                            ConsoleUI.printError("Failed to delete budget.");
+                        }
+                        ConsoleUI.pause();
+                    } catch (NumberFormatException e) {
+                        ConsoleUI.printError("Invalid ID format.");
+                        ConsoleUI.pause();
+                    }
+                    break;
+                case "5":
                     return;
                 default:
                     ConsoleUI.printError("Invalid option.");

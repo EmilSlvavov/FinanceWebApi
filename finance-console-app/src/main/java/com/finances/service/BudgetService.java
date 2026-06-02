@@ -24,7 +24,7 @@ public class BudgetService {
 
     public PagedResponse<BudgetResponse> getAllBudgets(int page, int pageSize) {
         try {
-            String endpoint = String.format("/api/budgets?filter.page=%d&filter.pageSize=%d&filter.sortBy=createdAt&filter.sortDirection=DESC", 
+            String endpoint = String.format("/api/budgets?page=%d&pageSize=%d&sortBy=createdAt&sortDirection=DESC", 
                     page, pageSize);
             return apiClient.get(endpoint, PagedResponse.class);
         } catch (IOException e) {
@@ -39,6 +39,26 @@ public class BudgetService {
         } catch (IOException e) {
             System.err.println("Get budget failed: " + e.getMessage());
             return null;
+        }
+    }
+
+    public BudgetResponse updateBudget(Integer id, String name, Double value, String currency, Boolean isRecurring) {
+        try {
+            BudgetRequest request = new BudgetRequest(name, value, currency, isRecurring);
+            return apiClient.put("/api/budgets/" + id, request, BudgetResponse.class);
+        } catch (IOException e) {
+            System.err.println("Update budget failed: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public boolean deleteBudget(Integer id) {
+        try {
+            apiClient.delete("/api/budgets/" + id);
+            return true;
+        } catch (IOException e) {
+            System.err.println("Delete budget failed: " + e.getMessage());
+            return false;
         }
     }
 }

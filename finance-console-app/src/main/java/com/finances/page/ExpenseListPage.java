@@ -50,7 +50,9 @@ public class ExpenseListPage {
 
             System.out.println("\n1. Next Page");
             System.out.println("2. Previous Page");
-            System.out.println("3. Back to Menu");
+            System.out.println("3. Edit Expense");
+            System.out.println("4. Delete Expense");
+            System.out.println("5. Back to Menu");
             String choice = ConsoleUI.readInput("\nSelect option: ");
 
             switch (choice) {
@@ -71,6 +73,31 @@ public class ExpenseListPage {
                     }
                     break;
                 case "3":
+                    String expenseIdStr = ConsoleUI.readInput("Enter expense ID to edit: ");
+                    try {
+                        Integer expenseId = Integer.parseInt(expenseIdStr);
+                        EditExpensePage.show(expenseService, expenseId);
+                    } catch (NumberFormatException e) {
+                        ConsoleUI.printError("Invalid ID format.");
+                        ConsoleUI.pause();
+                    }
+                    break;
+                case "4":
+                    String deleteIdStr = ConsoleUI.readInput("Enter expense ID to delete: ");
+                    try {
+                        Integer expenseId = Integer.parseInt(deleteIdStr);
+                        if (expenseService.deleteExpense(expenseId)) {
+                            ConsoleUI.printSuccess("Expense deleted successfully!");
+                        } else {
+                            ConsoleUI.printError("Failed to delete expense.");
+                        }
+                        ConsoleUI.pause();
+                    } catch (NumberFormatException e) {
+                        ConsoleUI.printError("Invalid ID format.");
+                        ConsoleUI.pause();
+                    }
+                    break;
+                case "5":
                     return;
                 default:
                     ConsoleUI.printError("Invalid option.");
