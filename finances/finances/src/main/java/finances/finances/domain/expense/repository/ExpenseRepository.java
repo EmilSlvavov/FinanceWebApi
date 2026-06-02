@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface ExpenseRepository extends JpaRepository<Expense, Integer>, JpaSpecificationExecutor<Expense> {
-    @Query("SELECT COALESCE(SUM(e.amount), 0) FROM Expense e WHERE e.expenseCategory.user.id = :userId")
-    Double sumAmountByUserId(@Param("userId") Integer userId);
+    @Query("SELECT COALESCE(SUM(e.amount), 0) FROM Expense e WHERE e.budget.id = :budgetId")
+    Double sumAmountByBudgetId(@Param("budgetId") Integer budgetId);
 }

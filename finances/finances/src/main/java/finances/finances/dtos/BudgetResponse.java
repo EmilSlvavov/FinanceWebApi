@@ -16,10 +16,25 @@ public class BudgetResponse {
     @Schema(description = "Budget name")
     private String name;
 
-    @Schema(description = "Total budget amount")
-    private Double value;
+    @Schema(description = "The initial total amount the budget was set to")
+    private Double originalAmount;
 
-    @Schema(description = "ISO 4217 currency code")
+    @Schema(description = "Total amount spent so far across all linked expenses")
+    private Double spentAmount;
+
+    @Schema(description = "Amount remaining (originalAmount - spentAmount)")
+    private Double remainingAmount;
+
+    @Schema(description = "Percentage of budget spent (0-100)")
+    private Double spentPercent;
+
+    @Schema(description = "True if spentAmount exceeds originalAmount")
+    private Boolean overBudget;
+
+    @Schema(description = "Warning message when spending is high or over budget, null otherwise")
+    private String warning;
+
+    @Schema(description = "Currency code")
     private CurrencyType currency;
 
     @Schema(description = "Whether this budget auto-renews")
@@ -30,10 +45,4 @@ public class BudgetResponse {
 
     @Schema(description = "ID of the user this budget belongs to")
     private Integer userId;
-
-    private Double spentAmount;       // total spent across all user's expenses
-    private Double remainingAmount;   // value - spentAmount
-    private Double spentPercent;      // (spentAmount / value) * 100
-    private Boolean overBudget;       // true if spentAmount > value
-    private String warning;           // human readable message, null if fine
 }

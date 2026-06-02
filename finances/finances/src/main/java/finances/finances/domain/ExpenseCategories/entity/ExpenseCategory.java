@@ -7,6 +7,7 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -54,6 +55,6 @@ public class ExpenseCategory {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "expenseCategory", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "expenseCategory",fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Expense> expenses = new ArrayList<>();
 }

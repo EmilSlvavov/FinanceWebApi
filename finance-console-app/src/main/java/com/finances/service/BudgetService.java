@@ -3,7 +3,9 @@ package com.finances.service;
 import com.finances.dto.request.BudgetRequest;
 import com.finances.dto.response.BudgetResponse;
 import com.finances.dto.response.PagedResponse;
+import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
+import java.lang.reflect.Type;
 
 public class BudgetService {
     private final ApiClient apiClient;
@@ -24,11 +26,13 @@ public class BudgetService {
 
     public PagedResponse<BudgetResponse> getAllBudgets(int page, int pageSize) {
         try {
-            String endpoint = String.format("/api/budgets?filter.page=%d&filter.pageSize=%d&filter.sortBy=createdAt&filter.sortDirection=DESC", 
-                    page, pageSize);
-            return apiClient.get(endpoint, PagedResponse.class);
+            // Try simpler endpoint first without complex filter parameters
+            String endpoint = String.format("/api/budgets?page=%d&size=%d", page, pageSize);
+            Type type = new TypeToken<PagedResponse<BudgetResponse>>(){}.getType();
+            return apiClient.getWithType(endpoint, type);
         } catch (IOException e) {
             System.err.println("Get budgets failed: " + e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }

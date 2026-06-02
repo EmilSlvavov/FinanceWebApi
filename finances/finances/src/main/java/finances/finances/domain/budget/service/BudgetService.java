@@ -25,9 +25,10 @@ import java.util.concurrent.CompletableFuture;
 @Service
 @RequiredArgsConstructor
 public class BudgetService {
+
     private final BudgetRepository budgetRepository;
-    private final SecurityUtils securityUtils;
     private final ExpenseRepository expenseRepository;
+    private final SecurityUtils securityUtils;
 
     @Async("taskExecutor")
     public CompletableFuture<BudgetResponse> create(BudgetRequest request) {
@@ -41,23 +42,25 @@ public class BudgetService {
 
     @Async("taskExecutor")
     public CompletableFuture<Page<BudgetResponse>> findAll(BudgetFilterRequest filter) {
-        Integer userId = securityUtils.currentUserIsAdmin() ? null : securityUtils.getCurrentUser().getId();
+        Integer userId = securityUtils.currentUserIsAdmin()
+            ? null
+            : securityUtils.getCurrentUser().getId();
 
         Specification<Budget> spec = Specification.allOf(
-                BaseSpecification.joinEqual("user", "id", userId),
-                BaseSpecification.equal("currency", filter.getCurrency()),
-                BaseSpecification.equal("isRecurring", filter.getIsRecurring()),
-                BaseSpecification.between("value", filter.getMinValue(), filter.getMaxValue())
+            BaseSpecification.joinEqual("user", "id", userId),
+            BaseSpecification.equal("currency", filter.getCurrency()),
+            BaseSpecification.equal("isRecurring", filter.getIsRecurring()),
+            BaseSpecification.between("value", filter.getMinOriginalAmount(), filter.getMaxOriginalAmount())
         );
 
         Sort sort = filter.getSortDir().equalsIgnoreCase("asc")
-                ? Sort.by(filter.getSortBy()).ascending()
-                : Sort.by(filter.getSortBy()).descending();
+            ? Sort.by(filter.getSortBy()).ascending()
+            : Sort.by(filter.getSortBy()).descending();
 
         Pageable pageable = PageRequest.of(filter.getPage(), filter.getSize(), sort);
 
         return CompletableFuture.completedFuture(
-                budgetRepository.findAll(spec, pageable).map(this::toResponse)
+            budgetRepository.findAll(spec, pageable).map(this::toResponse)
         );
     }
 
@@ -86,7 +89,7 @@ public class BudgetService {
 
     private void applyRequest(Budget budget, BudgetRequest request) {
         budget.setName(request.getName());
-        budget.setValue(request.getValue());
+        budget.setValue(request.getOriginalAmount()); // DTO uses originalAmount, entity stores as value
         budget.setCurrency(request.getCurrency());
         budget.setIsRecurring(request.getIsRecurring());
     }
@@ -101,15 +104,15 @@ public class BudgetService {
         BudgetResponse response = new BudgetResponse();
         response.setId(budget.getId());
         response.setName(budget.getName());
-        response.setValue(budget.getValue());
+        response.setOriginalAmount(budget.getValue());
         response.setCurrency(budget.getCurrency());
         response.setIsRecurring(budget.getIsRecurring());
         response.setCreatedAt(budget.getCreatedAt());
         response.setUserId(budget.getUser().getId());
 
-        Double spentAmount = expenseRepository.sumAmountByUserId(budget.getUser().getId());
+        Double spentAmount = expenseRepository.sumAmountByBudgetId(budget.getId());
         double remaining = budget.getValue() - spentAmount;
-        double percent = (spentAmount / budget.getValue()) * 100.0;
+        double percent = budget.getValue() > 0 ? (spentAmount / budget.getValue()) * 100.0 : 0.0;
         boolean overBudget = spentAmount > budget.getValue();
 
         response.setSpentAmount(spentAmount);
@@ -119,15 +122,16 @@ public class BudgetService {
 
         if (overBudget) {
             response.setWarning(String.format(
-                    "Budget exceeded by %.2f %s", Math.abs(remaining), budget.getCurrency().name()));
+                "Budget exceeded by %.2f %s",
+                Math.abs(remaining), budget.getCurrency().name()));
         } else if (percent >= 90) {
             response.setWarning(String.format(
-                    "Warning: %.1f%% of budget used. Only %.2f %s remaining",
-                    percent, remaining, budget.getCurrency().name()));
+                "Warning: %.1f%% of budget used. Only %.2f %s remaining",
+                percent, remaining, budget.getCurrency().name()));
         } else if (percent >= 75) {
             response.setWarning(String.format(
-                    "%.1f%% of budget used. %.2f %s remaining",
-                    percent, remaining, budget.getCurrency().name()));
+                "%.1f%% of budget used. %.2f %s remaining",
+                percent, remaining, budget.getCurrency().name()));
         } else {
             response.setWarning(null);
         }

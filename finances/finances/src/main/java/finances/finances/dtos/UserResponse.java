@@ -12,6 +12,9 @@ public class UserResponse {
     @Schema(description = "User ID")
     private Integer id;
 
+    @Schema(description = "User name")
+    private String username;
+
     @Schema(description = "User role")
     private RoleType role;
 

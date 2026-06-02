@@ -44,7 +44,7 @@ public class User {
     private String password;
 
     // Longest expected value is "ADMIN" (5 chars) — 20 gives plenty of room
-    @NotBlank
+    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 5)
     private RoleType role;

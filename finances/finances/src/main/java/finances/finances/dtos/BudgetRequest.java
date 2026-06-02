@@ -16,12 +16,13 @@ public class BudgetRequest {
     @Schema(description = "Descriptive name for the budget", example = "June 2024 Budget")
     private String name;
 
-    @NotNull(message = "Value is required")
-    @Positive(message = "Value must be positive")
-    @Schema(description = "Total budget amount", example = "5000.00")
-    private Double value;
+    @NotNull(message = "Original amount is required")
+    @Positive(message = "Original amount must be positive")
+    @Schema(description = "The initial total amount of the budget", example = "1000.00")
+    private Double originalAmount;
 
     @NotNull(message = "Currency is required")
+    @Schema(description = "ISO 4217 currency code", example = "EUR")
     private CurrencyType currency;
 
     @NotNull(message = "isRecurring is required")

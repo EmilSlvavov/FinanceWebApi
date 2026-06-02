@@ -2,6 +2,8 @@ package finances.finances.domain.expense.service;
 
 import finances.finances.domain.ExpenseCategories.entity.ExpenseCategory;
 import finances.finances.domain.ExpenseCategories.repository.ExpenseCategoriesRepository;
+import finances.finances.domain.budget.entity.Budget;
+import finances.finances.domain.budget.repository.BudgetRepository;
 import finances.finances.domain.expense.entity.Expense;
 import finances.finances.domain.expense.repository.ExpenseRepository;
 import finances.finances.domain.user.entity.User;
@@ -30,13 +32,16 @@ public class ExpenseService {
     private final ExpenseRepository expenseRepository;
     private final ExpenseCategoriesRepository expenseCategoryRepository;
     private final SecurityUtils securityUtils;
+    private final BudgetRepository budgetRepository;
 
     @Async("taskExecutor")
     public CompletableFuture<ExpenseResponse> create(ExpenseRequest request) {
         ExpenseCategory category = getCategoryOrThrow(request.getExpenseCategoryId());
         securityUtils.assertOwnerOrAdmin(category.getUser().getId());
+
         Expense expense = new Expense();
-        applyRequest(expense, request);
+        applyRequest(expense, request, category);
+
         return CompletableFuture.completedFuture(toResponse(expenseRepository.save(expense)));
     }
 
@@ -45,26 +50,27 @@ public class ExpenseService {
         User currentUser = securityUtils.getCurrentUser();
 
         Specification<Expense> ownerFilter = securityUtils.currentUserIsAdmin() ? null :
-                (root, query, cb) -> cb.equal(
-                        root.get("expenseCategory").get("user").get("id"), currentUser.getId());
+            (root, query, cb) -> cb.equal(
+                root.get("expenseCategory").get("user").get("id"), currentUser.getId());
 
         Specification<Expense> spec = Specification.allOf(
-                BaseSpecification.equal("isRecurring", filter.getIsRecurring()),
-                BaseSpecification.between("amount", filter.getMinAmount(), filter.getMaxAmount()),
-                BaseSpecification.dateTimeBetween("expenseDate", filter.getDateFrom(), filter.getDateTo()),
-                BaseSpecification.joinEqual("expenseCategory", "id", filter.getCategoryId()),
-                BaseSpecification.contains("description", filter.getDescription()),
-                ownerFilter
+            BaseSpecification.equal("isRecurring", filter.getIsRecurring()),
+            BaseSpecification.between("amount", filter.getMinAmount(), filter.getMaxAmount()),
+            BaseSpecification.dateTimeBetween("expenseDate", filter.getDateFrom(), filter.getDateTo()),
+            BaseSpecification.joinEqual("expenseCategory", "id", filter.getCategoryId()),
+            BaseSpecification.joinEqual("budget", "id", filter.getBudgetId()),
+            BaseSpecification.contains("description", filter.getDescription()),
+            ownerFilter
         );
 
         Sort sort = filter.getSortDir().equalsIgnoreCase("asc")
-                ? Sort.by(filter.getSortBy()).ascending()
-                : Sort.by(filter.getSortBy()).descending();
+            ? Sort.by(filter.getSortBy()).ascending()
+            : Sort.by(filter.getSortBy()).descending();
 
         Pageable pageable = PageRequest.of(filter.getPage(), filter.getSize(), sort);
 
         return CompletableFuture.completedFuture(
-                expenseRepository.findAll(spec, pageable).map(this::toResponse)
+            expenseRepository.findAll(spec, pageable).map(this::toResponse)
         );
     }
 
@@ -79,7 +85,10 @@ public class ExpenseService {
     public CompletableFuture<ExpenseResponse> update(Integer id, ExpenseRequest request) {
         Expense expense = getOrThrow(id);
         securityUtils.assertOwnerOrAdmin(expense.getExpenseCategory().getUser().getId());
-        applyRequest(expense, request);
+
+        ExpenseCategory category = getCategoryOrThrow(request.getExpenseCategoryId());
+        applyRequest(expense, request, category);
+
         return CompletableFuture.completedFuture(toResponse(expenseRepository.save(expense)));
     }
 
@@ -93,25 +102,39 @@ public class ExpenseService {
 
     // ── Private helpers ───────────────────────────────────────────────────────
 
-    private void applyRequest(Expense expense, ExpenseRequest request) {
-        ExpenseCategory category = getCategoryOrThrow(request.getExpenseCategoryId());
+    private void applyRequest(Expense expense, ExpenseRequest request, ExpenseCategory category) {
         expense.setExpenseCategory(category);
         expense.setAmount(request.getAmount());
         expense.setExpenseDate(request.getExpenseDate());
         expense.setIsRecurring(request.getIsRecurring() != null && request.getIsRecurring());
         expense.setDescription(request.getDescription());
+
+        // Link to budget if provided — verify the budget belongs to the same user
+        if (request.getBudgetId() != null) {
+            Budget budget = getBudgetOrThrow(request.getBudgetId());
+            securityUtils.assertOwnerOrAdmin(budget.getUser().getId());
+            expense.setBudget(budget);
+        } else {
+            expense.setBudget(null);
+        }
     }
 
     private Expense getOrThrow(Integer id) {
         return expenseRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Expense not found with id: " + id));
+            .orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Expense not found with id: " + id));
     }
 
     private ExpenseCategory getCategoryOrThrow(Integer categoryId) {
         return expenseCategoryRepository.findById(categoryId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Expense category not found with id: " + categoryId));
+            .orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Expense category not found with id: " + categoryId));
+    }
+
+    private Budget getBudgetOrThrow(Integer budgetId) {
+        return budgetRepository.findById(budgetId)
+            .orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Budget not found with id: " + budgetId));
     }
 
     private ExpenseResponse toResponse(Expense expense) {
@@ -125,10 +148,14 @@ public class ExpenseService {
         if (expense.getExpenseCategory() != null) {
             response.setExpenseCategoryId(expense.getExpenseCategory().getId());
             response.setExpenseCategoryType(
-                    expense.getExpenseCategory().getExpenseType() != null
-                            ? expense.getExpenseCategory().getExpenseType().name()
-                            : null
+                expense.getExpenseCategory().getExpenseType() != null
+                    ? expense.getExpenseCategory().getExpenseType().name()
+                    : null
             );
+        }
+
+        if (expense.getBudget() != null) {
+            response.setBudgetId(expense.getBudget().getId());
         }
 
         return response;

@@ -1,7 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="58ff2131-6968-459d-8c32-5bf77357f9d2" name="Changes" comment="" />
+    <list default="true" id="58ff2131-6968-459d-8c32-5bf77357f9d2" name="Changes" comment="hopefully last SwaggerDocumentation update">
+      <change afterPath="$PROJECT_DIR$/finance-console-app/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/finance-console-app/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/finance-console-app/.idea/jarRepositories.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/finance-console-app/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/finance-console-app/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/finance-console-app/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/finance-console-app/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/finance-console-app/src/main/java/com/finances/dto/response/PagedResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/finance-console-app/src/main/java/com/finances/dto/response/PagedResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/finance-console-app/src/main/java/com/finances/service/ApiClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/finance-console-app/src/main/java/com/finances/service/ApiClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/finance-console-app/src/main/java/com/finances/service/BudgetService.java" beforeDir="false" afterPath="$PROJECT_DIR$/finance-console-app/src/main/java/com/finances/service/BudgetService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/finance-console-app/src/main/java/com/finances/service/ExpenseCategoryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/finance-console-app/src/main/java/com/finances/service/ExpenseCategoryService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/finance-console-app/src/main/java/com/finances/service/ExpenseService.java" beforeDir="false" afterPath="$PROJECT_DIR$/finance-console-app/src/main/java/com/finances/service/ExpenseService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/finances/finances/src/main/java/finances/finances/domain/ExpenseCategories/entity/ExpenseCategory.java" beforeDir="false" afterPath="$PROJECT_DIR$/finances/finances/src/main/java/finances/finances/domain/ExpenseCategories/entity/ExpenseCategory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/finances/finances/src/main/java/finances/finances/domain/budget/entity/Budget.java" beforeDir="false" afterPath="$PROJECT_DIR$/finances/finances/src/main/java/finances/finances/domain/budget/entity/Budget.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/finances/finances/src/main/java/finances/finances/domain/budget/service/BudgetService.java" beforeDir="false" afterPath="$PROJECT_DIR$/finances/finances/src/main/java/finances/finances/domain/budget/service/BudgetService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/finances/finances/src/main/java/finances/finances/domain/expense/entity/Expense.java" beforeDir="false" afterPath="$PROJECT_DIR$/finances/finances/src/main/java/finances/finances/domain/expense/entity/Expense.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/finances/finances/src/main/java/finances/finances/domain/expense/repository/ExpenseRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/finances/finances/src/main/java/finances/finances/domain/expense/repository/ExpenseRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/finances/finances/src/main/java/finances/finances/domain/expense/service/ExpenseService.java" beforeDir="false" afterPath="$PROJECT_DIR$/finances/finances/src/main/java/finances/finances/domain/expense/service/ExpenseService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/finances/finances/src/main/java/finances/finances/domain/user/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/finances/finances/src/main/java/finances/finances/domain/user/entity/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/finances/finances/src/main/java/finances/finances/domain/user/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/finances/finances/src/main/java/finances/finances/domain/user/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/finances/finances/src/main/java/finances/finances/dtos/BudgetFilterRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/finances/finances/src/main/java/finances/finances/dtos/BudgetFilterRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/finances/finances/src/main/java/finances/finances/dtos/BudgetRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/finances/finances/src/main/java/finances/finances/dtos/BudgetRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/finances/finances/src/main/java/finances/finances/dtos/BudgetResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/finances/finances/src/main/java/finances/finances/dtos/BudgetResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/finances/finances/src/main/java/finances/finances/dtos/ExpenseFilterRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/finances/finances/src/main/java/finances/finances/dtos/ExpenseFilterRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/finances/finances/src/main/java/finances/finances/dtos/ExpenseRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/finances/finances/src/main/java/finances/finances/dtos/ExpenseRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/finances/finances/src/main/java/finances/finances/dtos/ExpenseResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/finances/finances/src/main/java/finances/finances/dtos/ExpenseResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/finances/finances/src/main/java/finances/finances/dtos/UserFilterRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/finances/finances/src/main/java/finances/finances/dtos/UserFilterRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/finances/finances/src/main/java/finances/finances/dtos/UserResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/finances/finances/src/main/java/finances/finances/dtos/UserResponse.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -15,12 +43,12 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "C:/Users/Emil PC/Desktop/FinanceWebApi"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Emil PC/Desktop/FinanceWebApi&quot;
   }
-}]]></component>
+}</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -30,6 +58,18 @@
       <option name="presentableId" value="Default" />
       <updated>1779654407465</updated>
     </task>
+    <task id="LOCAL-00001" summary="hopefully last SwaggerDocumentation update">
+      <created>1780359898926</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1780359898926</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="hopefully last SwaggerDocumentation update" />
+    <option name="LAST_COMMIT_MESSAGE" value="hopefully last SwaggerDocumentation update" />
   </component>
 </project>

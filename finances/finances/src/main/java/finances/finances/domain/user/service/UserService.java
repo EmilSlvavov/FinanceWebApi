@@ -43,6 +43,7 @@ public class UserService {
     public CompletableFuture<Page<UserResponse>> findAll(UserFilterRequest filter) {
         Specification<User> spec = Specification.allOf(
                 BaseSpecification.equal("role", filter.getRole()),
+                BaseSpecification.contains("username", filter.getUsername()),
                 BaseSpecification.equal("isActive", filter.getIsActive())
         );
 
@@ -87,6 +88,7 @@ public class UserService {
     private UserResponse toResponse(User user) {
         UserResponse response = new UserResponse();
         response.setId(user.getId());
+        response.setUsername(user.getUsername());
         response.setRole(user.getRole());
         response.setIsActive(user.getIsActive());
         response.setCreatedAt(user.getCreatedAt());

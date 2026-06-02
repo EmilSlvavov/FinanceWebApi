@@ -12,8 +12,12 @@ import java.time.LocalDateTime;
 public class ExpenseRequest {
 
     @NotNull(message = "Category ID is required")
-    @Schema(description = "ID of the expense category this expense belongs to", example = "3")
+    @Schema(description = "ID of the expense category this expense belongs to", example = "1")
     private Integer expenseCategoryId;
+
+    @NotNull(message = "Budget ID is required")
+    @Schema(description = "ID of the budget this expense is deducted from", example = "2")
+    private Integer budgetId;
 
     @NotNull(message = "Amount is required")
     @Positive(message = "Amount must be positive")
@@ -24,7 +28,7 @@ public class ExpenseRequest {
     @Schema(description = "Date and time the expense occurred", example = "2024-06-01T12:30:00")
     private LocalDateTime expenseDate;
 
-    @Schema(description = "Whether this is a recurring expense (e.g. subscription)", example = "false")
+    @Schema(description = "Whether this is a recurring expense", example = "false")
     private Boolean isRecurring;
 
     @Size(max = 255, message = "Description must not exceed 255 characters")

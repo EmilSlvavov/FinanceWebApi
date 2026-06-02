@@ -14,8 +14,11 @@ public class ExpenseResponse {
     @Schema(description = "ID of the linked expense category")
     private Integer expenseCategoryId;
 
-    @Schema(description = "Name of the expense type from the linked category")
+    @Schema(description = "Expense type from the linked category")
     private String expenseCategoryType;
+
+    @Schema(description = "ID of the budget this expense is deducted from")
+    private Integer budgetId;
 
     @Schema(description = "Expense amount")
     private Double amount;

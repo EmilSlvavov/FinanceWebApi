@@ -35,7 +35,7 @@ public class Budget {
     private Double value;
 
     // ISO 4217 currency codes are always exactly 3 characters (EUR, USD, BGN)
-    @NotBlank
+    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 3)
     private CurrencyType currency;

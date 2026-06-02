@@ -1,6 +1,7 @@
 package finances.finances.domain.expense.entity;
 
 import finances.finances.domain.ExpenseCategories.entity.ExpenseCategory;
+import finances.finances.domain.budget.entity.Budget;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -49,5 +50,9 @@ public class Expense {
     // Optional free-text note — 255 covers a full sentence comfortably
     @Column(length = 255)
     private String description;
+
+    @ManyToOne
+    @JoinColumn(name = "budget_id")
+    private Budget budget;
 }
 

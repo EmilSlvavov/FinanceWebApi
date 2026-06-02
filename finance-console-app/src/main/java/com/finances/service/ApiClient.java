@@ -1,8 +1,12 @@
 package com.finances.service;
 
+import com.fatboyindustrial.gsonjavatime.Converters;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import okhttp3.*;
 import java.io.IOException;
+import java.lang.reflect.Type;
 
 public class ApiClient {
     private final String baseUrl;
@@ -13,8 +17,14 @@ public class ApiClient {
     public ApiClient(String baseUrl) {
         this.baseUrl = baseUrl;
         this.httpClient = new OkHttpClient();
-        this.gson = new Gson();
+        this.gson = createGsonWithJavaTimeSupport();
         this.authToken = null;
+    }
+
+    private Gson createGsonWithJavaTimeSupport() {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        Converters.registerAll(gsonBuilder);
+        return gsonBuilder.create();
     }
 
     public void setAuthToken(String token) {
@@ -34,8 +44,8 @@ public class ApiClient {
         RequestBody requestBody = RequestBody.create(jsonBody, MediaType.parse("application/json"));
 
         Request.Builder requestBuilder = new Request.Builder()
-                .url(baseUrl + endpoint)
-                .post(requestBody);
+            .url(baseUrl + endpoint)
+            .post(requestBody);
 
         if (authToken != null) {
             requestBuilder.addHeader("Authorization", "Bearer " + authToken);
@@ -54,8 +64,8 @@ public class ApiClient {
 
     public <T> T get(String endpoint, Class<T> responseClass) throws IOException {
         Request.Builder requestBuilder = new Request.Builder()
-                .url(baseUrl + endpoint)
-                .get();
+            .url(baseUrl + endpoint)
+            .get();
 
         if (authToken != null) {
             requestBuilder.addHeader("Authorization", "Bearer " + authToken);
@@ -72,13 +82,33 @@ public class ApiClient {
         }
     }
 
+    public <T> T getWithType(String endpoint, Type type) throws IOException {
+        Request.Builder requestBuilder = new Request.Builder()
+            .url(baseUrl + endpoint)
+            .get();
+
+        if (authToken != null) {
+            requestBuilder.addHeader("Authorization", "Bearer " + authToken);
+        }
+
+        Request request = requestBuilder.build();
+
+        try (Response response = httpClient.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("API Error: " + response.code() + " " + response.message());
+            }
+            String responseBody = response.body().string();
+            return gson.fromJson(responseBody, type);
+        }
+    }
+
     public <T> T put(String endpoint, Object body, Class<T> responseClass) throws IOException {
         String jsonBody = gson.toJson(body);
         RequestBody requestBody = RequestBody.create(jsonBody, MediaType.parse("application/json"));
 
         Request.Builder requestBuilder = new Request.Builder()
-                .url(baseUrl + endpoint)
-                .put(requestBody);
+            .url(baseUrl + endpoint)
+            .put(requestBody);
 
         if (authToken != null) {
             requestBuilder.addHeader("Authorization", "Bearer " + authToken);
@@ -97,8 +127,8 @@ public class ApiClient {
 
     public void delete(String endpoint) throws IOException {
         Request.Builder requestBuilder = new Request.Builder()
-                .url(baseUrl + endpoint)
-                .delete();
+            .url(baseUrl + endpoint)
+            .delete();
 
         if (authToken != null) {
             requestBuilder.addHeader("Authorization", "Bearer " + authToken);
