@@ -788,6 +788,10 @@
             "format" : "int32",
             "description" : "User ID"
           },
+          "username" : {
+            "type" : "string",
+            "description" : "User name"
+          },
           "role" : {
             "type" : "string",
             "description" : "User role",
@@ -812,7 +816,13 @@
             "type" : "integer",
             "format" : "int32",
             "description" : "ID of the expense category this expense belongs to",
-            "example" : 3
+            "example" : 1
+          },
+          "budgetId" : {
+            "type" : "integer",
+            "format" : "int32",
+            "description" : "ID of the budget this expense is deducted from",
+            "example" : 2
           },
           "amount" : {
             "type" : "number",
@@ -828,7 +838,7 @@
           },
           "isRecurring" : {
             "type" : "boolean",
-            "description" : "Whether this is a recurring expense (e.g. subscription)",
+            "description" : "Whether this is a recurring expense",
             "example" : false
           },
           "description" : {
@@ -839,7 +849,7 @@
             "minLength" : 0
           }
         },
-        "required" : [ "amount", "expenseCategoryId", "expenseDate" ]
+        "required" : [ "amount", "budgetId", "expenseCategoryId", "expenseDate" ]
       },
       "ExpenseResponse" : {
         "type" : "object",
@@ -857,7 +867,12 @@
           },
           "expenseCategoryType" : {
             "type" : "string",
-            "description" : "Name of the expense type from the linked category"
+            "description" : "Expense type from the linked category"
+          },
+          "budgetId" : {
+            "type" : "integer",
+            "format" : "int32",
+            "description" : "ID of the budget this expense is deducted from"
           },
           "amount" : {
             "type" : "number",
@@ -956,15 +971,17 @@
             "maxLength" : 100,
             "minLength" : 0
           },
-          "value" : {
+          "originalAmount" : {
             "type" : "number",
             "format" : "double",
-            "description" : "Total budget amount",
-            "example" : 5000.0
+            "description" : "The initial total amount of the budget",
+            "example" : 1000.0
           },
           "currency" : {
             "type" : "string",
-            "enum" : [ "CAD", "CNY", "EUR", "GBP", "JPY", "MXN", "NOK", "NZD", "RUB", "TRY", "USD" ]
+            "description" : "ISO 4217 currency code",
+            "enum" : [ "CAD", "CNY", "EUR", "GBP", "JPY", "MXN", "NOK", "NZD", "RUB", "TRY", "USD" ],
+            "example" : "EUR"
           },
           "isRecurring" : {
             "type" : "boolean",
@@ -972,7 +989,7 @@
             "example" : false
           }
         },
-        "required" : [ "currency", "isRecurring", "name", "value" ]
+        "required" : [ "currency", "isRecurring", "name", "originalAmount" ]
       },
       "BudgetResponse" : {
         "type" : "object",
@@ -987,14 +1004,37 @@
             "type" : "string",
             "description" : "Budget name"
           },
-          "value" : {
+          "originalAmount" : {
             "type" : "number",
             "format" : "double",
-            "description" : "Total budget amount"
+            "description" : "The initial total amount the budget was set to"
+          },
+          "spentAmount" : {
+            "type" : "number",
+            "format" : "double",
+            "description" : "Total amount spent so far across all linked expenses"
+          },
+          "remainingAmount" : {
+            "type" : "number",
+            "format" : "double",
+            "description" : "Amount remaining (originalAmount - spentAmount)"
+          },
+          "spentPercent" : {
+            "type" : "number",
+            "format" : "double",
+            "description" : "Percentage of budget spent (0-100)"
+          },
+          "overBudget" : {
+            "type" : "boolean",
+            "description" : "True if spentAmount exceeds originalAmount"
+          },
+          "warning" : {
+            "type" : "string",
+            "description" : "Warning message when spending is high or over budget, null otherwise"
           },
           "currency" : {
             "type" : "string",
-            "description" : "ISO 4217 currency code",
+            "description" : "Currency code",
             "enum" : [ "CAD", "CNY", "EUR", "GBP", "JPY", "MXN", "NOK", "NZD", "RUB", "TRY", "USD" ]
           },
           "isRecurring" : {
@@ -1010,24 +1050,6 @@
             "type" : "integer",
             "format" : "int32",
             "description" : "ID of the user this budget belongs to"
-          },
-          "spentAmount" : {
-            "type" : "number",
-            "format" : "double"
-          },
-          "remainingAmount" : {
-            "type" : "number",
-            "format" : "double"
-          },
-          "spentPercent" : {
-            "type" : "number",
-            "format" : "double"
-          },
-          "overBudget" : {
-            "type" : "boolean"
-          },
-          "warning" : {
-            "type" : "string"
           }
         }
       },
@@ -1061,6 +1083,9 @@
           },
           "isActive" : {
             "type" : "boolean"
+          },
+          "username" : {
+            "type" : "string"
           },
           "page" : {
             "type" : "integer",
@@ -1115,32 +1140,45 @@
       },
       "ExpenseFilterRequest" : {
         "type" : "object",
+        "description" : "Filter, pagination and sort parameters for expenses",
         "properties" : {
           "categoryId" : {
             "type" : "integer",
-            "format" : "int32"
+            "format" : "int32",
+            "description" : "Filter by category ID"
+          },
+          "budgetId" : {
+            "type" : "integer",
+            "format" : "int32",
+            "description" : "Filter by budget ID"
           },
           "isRecurring" : {
-            "type" : "boolean"
+            "type" : "boolean",
+            "description" : "Filter by recurring flag"
           },
           "minAmount" : {
             "type" : "number",
-            "format" : "double"
+            "format" : "double",
+            "description" : "Filter by minimum amount"
           },
           "maxAmount" : {
             "type" : "number",
-            "format" : "double"
+            "format" : "double",
+            "description" : "Filter by maximum amount"
           },
           "dateFrom" : {
             "type" : "string",
-            "format" : "date-time"
+            "format" : "date-time",
+            "description" : "Filter from this date"
           },
           "dateTo" : {
             "type" : "string",
-            "format" : "date-time"
+            "format" : "date-time",
+            "description" : "Filter to this date"
           },
           "description" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "Search in description"
           },
           "page" : {
             "type" : "integer",
@@ -1223,21 +1261,26 @@
       },
       "BudgetFilterRequest" : {
         "type" : "object",
+        "description" : "Filter, pagination and sort parameters for budgets",
         "properties" : {
           "currency" : {
             "type" : "string",
+            "description" : "Filter by currency",
             "enum" : [ "CAD", "CNY", "EUR", "GBP", "JPY", "MXN", "NOK", "NZD", "RUB", "TRY", "USD" ]
           },
           "isRecurring" : {
-            "type" : "boolean"
+            "type" : "boolean",
+            "description" : "Filter by recurring flag"
           },
-          "minValue" : {
+          "minOriginalAmount" : {
             "type" : "number",
-            "format" : "double"
+            "format" : "double",
+            "description" : "Filter by minimum original amount"
           },
-          "maxValue" : {
+          "maxOriginalAmount" : {
             "type" : "number",
-            "format" : "double"
+            "format" : "double",
+            "description" : "Filter by maximum original amount"
           },
           "page" : {
             "type" : "integer",
